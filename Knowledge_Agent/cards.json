@@ -1,0 +1,16 @@
+{
+  "name": "knowledge-agent",
+  "description": "An AI agent specialized in Retrieval-Augmented Generation (RAG). It answers questions using an internal knowledge base, indexed documents, and vector search instead of the public internet.",
+
+  "url": "http://localhost:8002",
+
+  "version": "1.0.0",
+
+  "skills": [
+    {
+      "id": "knowledge_retrieval",
+      "name": "Knowledge Retrieval",
+      "description": "Retrieve information from internal documents using semantic search and RAG."
+    }
+  ]
+}
