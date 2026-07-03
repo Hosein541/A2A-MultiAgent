@@ -1,0 +1,11 @@
+__pycache__/
+outputs/
+
+*.env
+*.mp4
+input_video.mp4
+output_2x.mp4
+*.rar
+*.ipynb
+*.lock
+test.py 

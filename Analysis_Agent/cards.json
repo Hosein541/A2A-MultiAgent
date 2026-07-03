@@ -1,0 +1,21 @@
+{
+  "name": "analysis-agent",
+  "description": "An AI agent specialized in mathematical reasoning, financial calculations, market analysis, and numerical problem solving. It combines mathematical tools with market data to answer analytical questions.",
+
+  "url": "http://localhost:8003",
+
+  "version": "1.0.0",
+
+  "skills": [
+    {
+      "id": "mathematical_reasoning",
+      "name": "Mathematical Reasoning",
+      "description": "Solve mathematical expressions, equations, and numerical reasoning tasks."
+    },
+    {
+      "id": "market_analysis",
+      "name": "Market Analysis",
+      "description": "Analyze market data, prices, financial indicators, and investment-related questions."
+    }
+  ]
+}

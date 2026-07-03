@@ -1,0 +1,16 @@
+{
+  "name": "search-agent",
+  "description": "An AI agent specialized in searching the public web. It retrieves up-to-date information, news, articles, documentation, and other online resources using web search tools. The agent is optimized for factual retrieval and internet-based question answering.",
+
+  "url": "http://localhost:8001",
+
+  "version": "1.0.0",
+
+  "skills": [
+    {
+      "id": "web_search",
+      "name": "Web Search",
+      "description": "Search the public internet for information, news, documentation, and general knowledge."
+    }
+  ]
+}
