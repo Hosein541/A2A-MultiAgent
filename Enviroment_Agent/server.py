@@ -6,57 +6,80 @@ from python_a2a import (
     run_server,
 )
 
-from python_a2a.langchain import to_a2a_server
+# from python_a2a.langchain import to_a2a_server
 
-from agent import env_agent
+from agent import search_agent
 
 
-async def create_server():
+# def build_card():
 
-    # Initialize LangGraph Agent
-    await env_agent.initialize()
+#     return AgentCard(
+#         name="Search Agent",
+#         description="AI agent specialized in web search using MCP tools.",
+#         url="http://localhost:8001",
+#         version="1.0.0",
+#         skills=[
+#             AgentSkill(
+#                 name="web_search",
+#                 description="Search internet and return structured results.",
+#                 tags=["search", "web", "tavily"],
+#             )
+#         ],
+#         capabilities={
+#             "streaming": True,
+#         },
+#     )
 
-    # Convert LangGraph/LangChain agent to A2A Server
-    a2a_server = to_a2a_server(env_agent.agent)
 
-    # Agent Card
-    a2a_server.agent_card = AgentCard(
-        name="Environment Agent",
-        description=("Weather and environmental information."),
-        url="http://localhost:8004",
-        port=8004,
+# async def main():
+
+#     await search_agent.initialize()
+
+#     card = build_card()
+
+#     a2a_server = to_a2a_server(
+#         search_agent.agent,
+#         agent_card=card   # 🔥 مهم‌ترین fix
+#     )
+
+#     run_server(
+#         a2a_server,
+#         host="0.0.0.0",
+#         port=8001,
+#     )
+
+import asyncio
+from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
+from agent import search_agent
+
+def build_card():
+    return AgentCard(
+        name="Search Agent",
+        description="AI agent specialized in web search using MCP tools.",
+        url="http://localhost:8001",      # ← این خیلی مهمه
+        version="1.0.0",
         skills=[
             AgentSkill(
-                name="Weather",
-                description="Weather forecasting and current conditions.",
-                tags=[
-                    "weather",
-                    "forecast",
-                ],
-                examples=[
-                    "Weather in Tokyo",
-                    "Will it rain tomorrow?",
-                ],
+                name="web_search",
+                description="Search internet and return structured results.",
+                tags=["search", "web"],
             )
         ],
-        capabilities={
-            "streaming": True,
-        },
-        )
-
-    return a2a_server
-
-
-async def main():
-
-    server = await create_server()
-
-    run_server(
-        server,
-        host="0.0.0.0",
-        port=8001,
+        capabilities={"streaming": True},
     )
 
+async def main():
+    # await search_agent.initialize()   # فعلاً کامنت
+
+    a2a_server = A2AServer(url="https://localhost:8001")
+    a2a_server.agent_card = build_card()
+
+    print("✅ AgentCard attached!")
+    print(f"Name : {a2a_server.agent_card.name}")
+    print(f"URL  : {a2a_server.agent_card.url}")
+
+    print("\n🚀 Starting A2A Server...")
+    run_server(a2a_server, host="0.0.0.0", port=8001)
 
 if __name__ == "__main__":
     asyncio.run(main())
