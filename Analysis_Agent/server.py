@@ -143,7 +143,7 @@ async def main():
     print(f"URL  : {a2a_server.agent_card.url}")
 
     print("\n🚀 Starting A2A Server...")
-    run_server(a2a_server, host="0.0.0.0", port=8001)
+    run_server(a2a_server, host="0.0.0.0", port=8002)
 
 if __name__ == "__main__":
     asyncio.run(main())
