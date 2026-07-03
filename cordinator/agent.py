@@ -171,12 +171,12 @@ class Coordinator:
 
         self.clients = {
             "search": A2AClient("http://localhost:8001"),
-            "knowledge": A2AClient("http://localhost:8002"),
-            "analysis": A2AClient("http://localhost:8003"),
-            "environment": A2AClient("http://localhost:8004"),
+            "analysis": A2AClient("http://localhost:8002"),
+            "environment": A2AClient("http://localhost:8003"),
+            "knowledge": A2AClient("http://localhost:8004"),
         }
-        self.search = A2AClient("http://localhost:8001")
-        print(self.search.get_agent_card())
+        # self.search = A2AClient("http://localhost:8001")
+        # print(self.search.get_agent_card())
 
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-3.1-flash-lite",
@@ -204,7 +204,7 @@ class Coordinator:
     async def load_registry(self):
         for name, client in self.clients.items():
             try:
-                card = await client.get_agent_card()   # بهتره async باشه اگر ساپورت کنه
+                card = client.get_agent_card()   # بهتره async باشه اگر ساپورت کنه
                 print(f"✅ Loaded card for {name}: {card.name} - {card.description}")
                 self.registry[name] = {"client": client, "card": card}
             except Exception as e:
@@ -285,6 +285,24 @@ class Coordinator:
     # FINAL ANSWER
     # -----------------------
 
+    async def finalize(self, query: str, results):
+
+        prompt = f"""
+You are a final answer synthesizer.
+
+User question:
+{query}
+
+Agent results:
+{results}
+
+Return a clean, human-readable final answer.
+"""
+
+        response = self.llm.invoke(prompt)
+
+        return response.content[0]["text"]
+    
     # -----------------------
     # MAIN ENTRY
     # -----------------------
@@ -297,4 +315,7 @@ class Coordinator:
 
         results = await self.execute(plan)
 
-        return results
+        final = await self.finalize(query, results)
+
+
+        return final

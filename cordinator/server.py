@@ -1,5 +1,5 @@
 import asyncio
-from agent import Coordinator
+from agent2 import Coordinator
 
 coordinator = Coordinator()
 
