@@ -1,6 +1,6 @@
 import asyncio
 from agent import Coordinator
-
+from utils.cli import *
 coordinator = Coordinator()
 
 
@@ -8,14 +8,16 @@ async def main():
 
     while True:
         
-        query = input("User: ")
+        user()
+        query = input()
 
         if query in ["exit", "quit"]:
             break
 
         result = await coordinator.chat(query)
-
-        print("\nAssistant:", result, "\n")
+        
+        assistant()
+        print(result)
 
 
 if __name__ == "__main__":
