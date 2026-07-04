@@ -11,3 +11,4 @@ output_2x.mp4
 test.py 
 client.py
 card.py
+*.json
