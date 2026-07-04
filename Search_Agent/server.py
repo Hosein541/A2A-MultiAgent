@@ -6,47 +6,7 @@ from python_a2a import (
     run_server,
 )
 
-# from python_a2a.langchain import to_a2a_server
-
 from agent import search_agent
-
-
-# def build_card():
-
-#     return AgentCard(
-#         name="Search Agent",
-#         description="AI agent specialized in web search using MCP tools.",
-#         url="http://localhost:8001",
-#         version="1.0.0",
-#         skills=[
-#             AgentSkill(
-#                 name="web_search",
-#                 description="Search internet and return structured results.",
-#                 tags=["search", "web", "tavily"],
-#             )
-#         ],
-#         capabilities={
-#             "streaming": True,
-#         },
-#     )
-
-
-# async def main():
-
-#     await search_agent.initialize()
-
-#     card = build_card()
-
-#     a2a_server = to_a2a_server(
-#         search_agent.agent,
-#         agent_card=card   # 🔥 مهم‌ترین fix
-#     )
-
-#     run_server(
-#         a2a_server,
-#         host="0.0.0.0",
-#         port=8001,
-#     )
 
 import asyncio
 from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
