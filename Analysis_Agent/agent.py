@@ -1,14 +1,12 @@
 import os
 from dotenv import load_dotenv
-
+load_dotenv()
+import asyncio
+from pathlib import Path
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
-from pathlib import Path
-# from langchain.prebuilt import AgentExecutor, create_react_agent
-load_dotenv()
-import asyncio
 
 
 def extract_text(content):
@@ -35,27 +33,13 @@ class AnalysisAgent:
 
     def __init__(self):
 
-        # self.client = MultiServerMCPClient(
-        #     {
-        #     "math": {
-        #         "transport": "stdio",
-        #         "command": "python",
-        #         "args": ["servers/math_server.py"],
-        #     },
-        #     "market": {
-        #         "transport": "stdio",
-        #         "command": "python",
-        #         "args": ["servers/market_server.py"],
-        #     },
-        #     }
-        # )
         self.client = MultiServerMCPClient(
         {
             "math": {
                 "transport": "stdio",
                 "command": "python",
-                "args": ["-m", "servers.math_server"],   # بهتره به صورت module
-                "cwd": str(Path(__file__).parent),       # مهم
+                "args": ["-m", "servers.math_server"],   
+                "cwd": str(Path(__file__).parent),       
             },
             "market": {
                 "transport": "stdio",
@@ -77,21 +61,7 @@ class AnalysisAgent:
         self.llm = None
         self.tools = None
 
-    # async def initialize(self):
 
-    #     tools = await self.client.get_tools()
-
-    #     llm = ChatGoogleGenerativeAI(
-    #         model="gemini-2.5-flash",
-    #         google_api_key=os.getenv("GOOGLE_API_KEY"),
-    #         temperature=0.2,
-    #     )
-
-    #     self.agent = create_react_agent(
-    #         model=llm,
-    #         tools=tools,
-    #         checkpointer=self.memory,
-    #     )
     async def initialize(self):
         print("🔄 Getting tools from MCP servers...")
         try:
@@ -101,12 +71,13 @@ class AnalysisAgent:
             # print tools names for debug
             for t in tools:
                 print(f"   - {t.name}")
+
             llm = ChatGoogleGenerativeAI(
                 model="gemini-2.5-flash",
                 google_api_key=os.getenv("GOOGLE_API_KEY"),
                 temperature=0.2,
             )
-# 
+
             self.agent = create_react_agent(
                 model=llm,
                 tools=tools,
@@ -116,33 +87,6 @@ class AnalysisAgent:
             print(f"❌ MCP Error: {e}")
             raise
 
-
-        # متد کلیدی برای سازگاری با A2A
-    def invoke(self, input):
-
-        # agent_executor = AgentExecutor(agent=self.agent, tools=self.tools)
-        # result = agent_executor.run("Research quantum computing advances in 2024")
-        # Use the agent
-
-
-        # """Synchronous entry point for A2A"""
-        # if isinstance(input, dict):
-        #     query = input.get("input") or input.get("messages", [{}])[-1].get("content", str(input))
-        # else:
-        #     query = str(input)
-        
-        # # فراخوانی async
-        # return asyncio.run(self.ainvoke(query))
-        # print("========== INVOKE ==========")
-        # print(f"input\t\t\tf{input}")
-
-        # if isinstance(input, dict):
-        #     query = input.get("input") or input.get("messages", [{}])[-1].get("content", str(input))
-        # else:
-        #     query = str(input)
-
-        # return asyncio.run(self.ainvoke(query))
-        raise Exception("INVOKE CALLED")
     
     async def ainvoke(self, query: str):
         if not self.agent:
@@ -153,7 +97,7 @@ class AnalysisAgent:
                 "messages": [{"role": "user", "content": query}]
             }, config=self.config)
             
-            # استخراج پاسخ
+            # extract the response
             if isinstance(result, dict) and "messages" in result:
                 last = result["messages"][-1]
                 return last.content if hasattr(last, "content") else str(last)
@@ -161,7 +105,6 @@ class AnalysisAgent:
         except Exception as e:
             return f"Error: {str(e)}"
         
-# analysis_agent = AnalysisAgent()
 
 
 from python_a2a import A2AServer
@@ -197,5 +140,4 @@ class AnalysisA2AServer(A2AServer):
 
         return task
     
-# analysis_agent = AnalysisA2AServer()
 
