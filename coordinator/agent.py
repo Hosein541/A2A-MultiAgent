@@ -116,7 +116,6 @@ Return ONLY valid JSON in this format:
 """
 
         response = self.llm.invoke(prompt)
-        # بهتره content رو درست هندل کنیم
         content = response.content[0]["text"] if isinstance(response.content, list) else response.content
 
         print(f"output of the planner:{content}")
