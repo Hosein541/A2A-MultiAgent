@@ -5,7 +5,6 @@ from python_a2a import (
     AgentSkill,
     run_server,
 )
-
 from python_a2a.langchain import to_a2a_server
 
 # from agent import search_agent
@@ -50,7 +49,7 @@ from python_a2a.langchain import to_a2a_server
 
 import asyncio
 from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
-from agent import analysis_agent
+from agent import AnalysisA2AServer
 
 from python_a2a import AgentCard, AgentSkill
 
@@ -133,17 +132,45 @@ def build_card():
     )
 
 async def main():
-    await analysis_agent.initialize()   # فعلاً کامنت
+    # await analysis_agent.initialize()   # فعلاً کامنت
 
-    a2a_server = A2AServer(analysis_agent.agent)
-    a2a_server.agent_card = build_card()
 
-    print("✅ AgentCard attached!")
-    print(f"Name : {a2a_server.agent_card.name}")
-    print(f"URL  : {a2a_server.agent_card.url}")
+    # a2a_server = A2AServer(analysis_agent)
+    # a2a_server.agent_card = build_card()
 
-    print("\n🚀 Starting A2A Server...")
-    run_server(a2a_server, host="0.0.0.0", port=8002)
+    # print("✅ AgentCard attached!")
+    # print(f"Name : {a2a_server.agent_card.name}")
+    # print(f"URL  : {a2a_server.agent_card.url}")
 
+    # print("\n🚀 Starting A2A Server...")
+    # run_server(a2a_server, host="0.0.0.0", port=8002)
+    # a2a_server = AnalysisA2AServer()
+
+    # await a2a_server.analysis_agent.initialize()   # اگر داخل __init__ انجام ندادی
+    # await a2a_server.analysis.initialize()
+
+    # a2a_server.agent_card = build_card()
+    card = build_card()
+
+    a2a_server = AnalysisA2AServer(card)
+
+    await a2a_server.analysis.initialize()
+
+    run_server(
+        a2a_server,
+        host="0.0.0.0",
+        port=8002,
+    )
+
+    # print("✅ AgentCard attached!")
+    # print(f"Name : {a2a_server.agent_card.name}")
+    # print(f"URL  : {a2a_server.agent_card.url}")
+# 
+    # print("\n🚀 Starting A2A Server...")
+    # run_server(a2a_server, host="0.0.0.0", port=8002)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 if __name__ == "__main__":
     asyncio.run(main())

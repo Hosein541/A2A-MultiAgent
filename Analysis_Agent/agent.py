@@ -6,7 +6,9 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from pathlib import Path
+# from langchain.prebuilt import AgentExecutor, create_react_agent
 load_dotenv()
+import asyncio
 
 
 def extract_text(content):
@@ -72,6 +74,8 @@ class AnalysisAgent:
         }
 
         self.agent = None
+        self.llm = None
+        self.tools = None
 
     # async def initialize(self):
 
@@ -92,6 +96,7 @@ class AnalysisAgent:
         print("🔄 Getting tools from MCP servers...")
         try:
             tools = await self.client.get_tools()
+            self.tools = tools 
             print(f"✅ Successfully loaded {len(tools)} tools")
             # print tools names for debug
             for t in tools:
@@ -110,59 +115,87 @@ class AnalysisAgent:
         except Exception as e:
             print(f"❌ MCP Error: {e}")
             raise
-    async def invoke(self, query: str):
 
-        final_answer = ""
 
-        tool_calls = []
+        # متد کلیدی برای سازگاری با A2A
+    def invoke(self, input):
 
-        async for event in self.agent.astream_events(
-            {
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": query,
-                    }
-                ]
-            },
-            config=self.config,
-            version="v2",
-        ):
+        # agent_executor = AgentExecutor(agent=self.agent, tools=self.tools)
+        # result = agent_executor.run("Research quantum computing advances in 2024")
+        # Use the agent
 
-            event_type = event["event"]
 
-            # Tool Started
-            if event_type == "on_tool_start":
+        # """Synchronous entry point for A2A"""
+        # if isinstance(input, dict):
+        #     query = input.get("input") or input.get("messages", [{}])[-1].get("content", str(input))
+        # else:
+        #     query = str(input)
+        
+        # # فراخوانی async
+        # return asyncio.run(self.ainvoke(query))
+        # print("========== INVOKE ==========")
+        # print(f"input\t\t\tf{input}")
 
-                tool_calls.append(
-                    {
-                        "tool": event["name"],
-                        "status": "started",
-                    }
-                )
+        # if isinstance(input, dict):
+        #     query = input.get("input") or input.get("messages", [{}])[-1].get("content", str(input))
+        # else:
+        #     query = str(input)
 
-            # Tool Finished
-            elif event_type == "on_tool_end":
-
-                tool_calls.append(
-                    {
-                        "tool": event["name"],
-                        "status": "finished",
-                    }
-                )
-
-            # LLM Streaming
-            elif event_type == "on_chat_model_stream":
-
-                chunk = event["data"]["chunk"]
-
-                if hasattr(chunk, "content") and chunk.content:
-
-                    final_answer += extract_text(chunk.content)
-
-        return {
-            "answer": final_answer,
-            "tool_calls": tool_calls,
-        }
+        # return asyncio.run(self.ainvoke(query))
+        raise Exception("INVOKE CALLED")
     
-analysis_agent = AnalysisAgent()
+    async def ainvoke(self, query: str):
+        if not self.agent:
+            await self.initialize()
+
+        try:
+            result = await self.agent.ainvoke({
+                "messages": [{"role": "user", "content": query}]
+            }, config=self.config)
+            
+            # استخراج پاسخ
+            if isinstance(result, dict) and "messages" in result:
+                last = result["messages"][-1]
+                return last.content if hasattr(last, "content") else str(last)
+            return str(result)
+        except Exception as e:
+            return f"Error: {str(e)}"
+        
+# analysis_agent = AnalysisAgent()
+
+
+from python_a2a import A2AServer
+from python_a2a import TaskStatus, TaskState
+
+class AnalysisA2AServer(A2AServer):
+
+
+    def __init__(self, agent_card):
+        super().__init__(agent_card=agent_card)
+        self.analysis = AnalysisAgent()
+
+    def handle_task(self, task):
+
+        text = task.message["content"]["text"]
+
+        result = asyncio.run(
+            self.analysis.ainvoke(text)
+        )
+
+        task.artifacts = [{
+            "parts":[
+                {
+                    "type":"text",
+                    "text":result
+                }
+            ]
+        }]
+
+        task.status = TaskStatus(
+            state=TaskState.COMPLETED
+        )
+
+        return task
+    
+# analysis_agent = AnalysisA2AServer()
+
