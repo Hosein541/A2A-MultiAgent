@@ -53,8 +53,7 @@ class Coordinator:
             "Environment Agent": A2AClient("http://localhost:8003"),
             "Knowlege Agent": A2AClient("http://localhost:8004"),
         }
-        self.search = A2AClient("http://localhost:8001")
-        # print(self.search.get_agent_card())
+        
 
 
         self.llm = ChatGoogleGenerativeAI(
@@ -83,9 +82,6 @@ class Coordinator:
             card = data["card"]
             skills = ", ".join([s.name for s in card.skills]) if card.skills else "No skills defined"
 
-            # print(f"card name:\t\t{card.name}")
-            # print(f"card description:\t\t{card.description}")
-            # print(f"skills:\t\t{skills}")
             
             context += f"""
 Agent: {card.name}
