@@ -46,7 +46,7 @@ class Coordinator:
     def __init__(self):
         self.clients = {
             "Search Agent": A2AClient("http://localhost:8001"),
-            "Analysis Agent": A2AClient("http://localhost:8002"),
+            "Analysis Agent": A2AClient("http://localhost:8005"),
             "Environment Agent": A2AClient("http://localhost:8003"),
             "Knowlege Agent": A2AClient("http://localhost:8004"),
         }
@@ -130,6 +130,7 @@ Return ONLY valid JSON in this format:
             try:
                 running_step(step.agent, step.task)
                 result = client.ask(step.task)
+                result = normalize_result(result)
                 results.append({
                     "agent": step.agent,
                     "task": step.task,
@@ -179,6 +180,7 @@ Return a clean, human-readable final answer.
         plan = await self.plan(query)
 
         results = await self.execute(plan)
+        print(results)
 
         final = await self.finalize(query, results)
 

@@ -9,7 +9,7 @@ def build_card():
     return AgentCard(
         name="Analysis Agent",
         description="Specialized financial analysis agent. Provides real-time market data, historical prices, symbol search, and advanced mathematical calculations.",
-        url="http://localhost:8002",   # Change to your actual port
+        url="http://localhost:8005",   # Change to your actual port
         version="1.0.0",
         skills=[
             AgentSkill(
@@ -93,7 +93,7 @@ async def main():
     run_server(
         a2a_server,
         host="0.0.0.0",
-        port=8002,
+        port=8005,
     )
 
 if __name__ == "__main__":

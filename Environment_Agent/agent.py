@@ -9,6 +9,7 @@ from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from python_a2a import A2AServer
 from python_a2a import TaskStatus, TaskState
+import uuid 
 
 def extract_text(content):
 
@@ -48,7 +49,8 @@ class EnvironmentAgent:
 
         self.config = {
             "configurable": {
-                "thread_id": "search-agent"
+                # "thread_id": "search-agent"
+                "thread_id": str(uuid.uuid4())
             }
         }
 

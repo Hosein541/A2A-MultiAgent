@@ -9,6 +9,7 @@ from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from python_a2a import A2AServer
 from python_a2a import TaskStatus, TaskState
+import uuid 
 
 def extract_text(content):
 
@@ -54,7 +55,8 @@ class AnalysisAgent:
 
         self.config = {
             "configurable": {
-                "thread_id": "search-agent"
+                # "thread_id": "search-agent"
+                "thread_id": str(uuid.uuid4())
             }
         }
 
@@ -121,8 +123,9 @@ class AnalysisA2AServer(A2AServer):
         text = task.message["content"]["text"]
 
         result = asyncio.run(
-            self.analysis.ainvoke(text)
-        )
+            self.analysis.ainvoke(text)    
+        ) 
+
 
         task.artifacts = [{
             "parts":[

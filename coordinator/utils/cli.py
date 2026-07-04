@@ -122,3 +122,16 @@ def final(final_text):
         border_style="cyan"
     )
 )
+    
+
+def normalize_result(result):
+    if isinstance(result, list):
+        texts = []
+
+        for part in result:
+            if isinstance(part, dict):
+                texts.append(part.get("text", ""))
+
+        return "\n".join(texts)
+
+    return str(result)
