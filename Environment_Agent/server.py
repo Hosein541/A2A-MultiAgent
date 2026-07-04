@@ -53,7 +53,7 @@ async def main():
 
     a2a_server = EnvironmentA2AServer(card)
 
-    await a2a_server.analysis.initialize()
+    await a2a_server.env.initialize()
 
     run_server(
         a2a_server,

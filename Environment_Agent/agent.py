@@ -108,14 +108,14 @@ class EnvironmentA2AServer(A2AServer):
 
     def __init__(self, agent_card):
         super().__init__(agent_card=agent_card)
-        self.analysis = EnvironmentAgent()
+        self.env = EnvironmentAgent()
 
     def handle_task(self, task):
 
         text = task.message["content"]["text"]
 
         result = asyncio.run(
-            self.analysis.ainvoke(text)
+            self.env.ainvoke(text)
         )
 
         task.artifacts = [{
