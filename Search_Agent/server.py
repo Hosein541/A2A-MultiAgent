@@ -1,6 +1,6 @@
 import asyncio
 from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
-from agent import AnalysisA2AServer
+from agent import SearchA2AServer
 
 def build_card():
     return AgentCard(
@@ -21,9 +21,9 @@ async def main():
 
     card = build_card()
 
-    a2a_server = AnalysisA2AServer(card)
+    a2a_server = SearchA2AServer(card)
 
-    await a2a_server.analysis.initialize()
+    await a2a_server.search.initialize()
 
     run_server(
         a2a_server,
