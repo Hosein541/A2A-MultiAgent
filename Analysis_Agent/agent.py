@@ -7,7 +7,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
-
+from python_a2a import A2AServer
+from python_a2a import TaskStatus, TaskState
 
 def extract_text(content):
 
@@ -107,8 +108,6 @@ class AnalysisAgent:
         
 
 
-from python_a2a import A2AServer
-from python_a2a import TaskStatus, TaskState
 
 class AnalysisA2AServer(A2AServer):
 
