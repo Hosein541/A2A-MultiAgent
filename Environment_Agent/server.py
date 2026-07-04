@@ -1,8 +1,4 @@
 import asyncio
-
-
-
-import asyncio
 from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
 from agent import EnvironmentA2AServer
 
@@ -50,22 +46,6 @@ def build_card():
             "mcp_enabled": True
         }
     )
-
-# async def main():
-#     # await search_agent.initialize()   # فعلاً کامنت
-
-#     a2a_server = A2AServer(url="https://localhost:8003")
-#     a2a_server.agent_card = build_card()
-
-#     print("✅ AgentCard attached!")
-#     print(f"Name : {a2a_server.agent_card.name}")
-#     print(f"URL  : {a2a_server.agent_card.url}")
-
-#     print("\n🚀 Starting A2A Server...")
-#     run_server(a2a_server, host="0.0.0.0", port=8003)
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
 
 async def main():
 
