@@ -9,3 +9,5 @@ output_2x.mp4
 *.ipynb
 *.lock
 test.py 
+client.py
+card.py
