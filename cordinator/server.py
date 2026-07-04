@@ -7,7 +7,7 @@ coordinator = Coordinator()
 async def main():
 
     while True:
-
+        
         query = input("User: ")
 
         if query in ["exit", "quit"]:

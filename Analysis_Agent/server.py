@@ -6,7 +6,7 @@ from python_a2a import (
     run_server,
 )
 
-# from python_a2a.langchain import to_a2a_server
+from python_a2a.langchain import to_a2a_server
 
 # from agent import search_agent
 
@@ -133,9 +133,9 @@ def build_card():
     )
 
 async def main():
-    # await search_agent.initialize()   # فعلاً کامنت
+    await analysis_agent.initialize()   # فعلاً کامنت
 
-    a2a_server = A2AServer(url="https://localhost:8002")
+    a2a_server = A2AServer(analysis_agent.agent)
     a2a_server.agent_card = build_card()
 
     print("✅ AgentCard attached!")

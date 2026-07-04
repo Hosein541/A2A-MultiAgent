@@ -54,7 +54,8 @@ class Coordinator:
             "Environment Agent": A2AClient("http://localhost:8004"),
         }
         self.search = A2AClient("http://localhost:8001")
-        print(self.search.get_agent_card())
+        # print(self.search.get_agent_card())
+
 
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-3.1-flash-lite",
@@ -82,9 +83,9 @@ class Coordinator:
             card = data["card"]
             skills = ", ".join([s.name for s in card.skills]) if card.skills else "No skills defined"
 
-            print(f"card name:\t\t{card.name}")
-            print(f"card description:\t\t{card.description}")
-            print(f"skills:\t\t{skills}")
+            # print(f"card name:\t\t{card.name}")
+            # print(f"card description:\t\t{card.description}")
+            # print(f"skills:\t\t{skills}")
             
             context += f"""
 Agent: {card.name}
@@ -178,6 +179,11 @@ Return a clean, human-readable final answer.
 
         if not self.registry:
             await self.load_registry()
+
+        client = A2AClient("http://localhost:8001")
+        result = client.ask("2 + 12 را حساب کن و در 15 ضرب کن")
+        print("Result from Analysis Agent:", result)
+
 
         plan = await self.plan(query)
 
