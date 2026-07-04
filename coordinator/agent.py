@@ -12,6 +12,8 @@ load_dotenv()
 import asyncio
 import subprocess
 import time
+from utils.cli import *
+
 
 async def run_agent(folder: str, port: int):
     print(f"🚀 Starting {folder} on port {port}")
@@ -68,8 +70,9 @@ class Coordinator:
         """Load Agent Cards from all agents using real A2A discovery"""
         for name, client in self.clients.items():
             try:
-                card = client.get_agent_card()   # async بهتره
-                print(f"✅ Loaded card for {name}: {card.name}")
+                card = client.get_agent_card()   
+                # print(f"✅ Loaded card for {name}: {card.name}")
+                agent_loaded(card)
                 self.registry[name] = {"client": client, "card": card}
             except Exception as e:
                 print(f"❌ Failed to load card for {name}: {e}")
@@ -118,7 +121,8 @@ Return ONLY valid JSON in this format:
         response = self.llm.invoke(prompt)
         content = response.content[0]["text"] if isinstance(response.content, list) else response.content
 
-        print(f"output of the planner:{content}")
+        # print(f"output of the planner:{content}")
+        planner_output(content)
         return Plan.model_validate_json(content)
 
     # ===================== EXECUTION =====================
@@ -131,12 +135,15 @@ Return ONLY valid JSON in this format:
                 
             client = self.registry[step.agent]["client"]
             try:
+                running_step(step.agent, step.task)
                 result = client.ask(step.task)
                 results.append({
                     "agent": step.agent,
                     "task": step.task,
                     "result": result
                 })
+
+                agent_result(step.agent, result)
             except Exception as e:
                 results.append({
                     "agent": step.agent,
@@ -181,7 +188,7 @@ Return a clean, human-readable final answer.
 
         results = await self.execute(plan)
 
-        print(f"result of the agents:\t\t\t{results}")
+        # print(f"result of the agents:\t\t\t{results}")
 
         final = await self.finalize(query, results)
 

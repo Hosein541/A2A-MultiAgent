@@ -16,8 +16,7 @@ async def main():
 
         result = await coordinator.chat(query)
         
-        assistant()
-        print(result)
+        final(result)
 
 
 if __name__ == "__main__":
