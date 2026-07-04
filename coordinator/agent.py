@@ -1,17 +1,12 @@
 import os
 import asyncio
+import subprocess
 from dotenv import load_dotenv
-
+load_dotenv()
 from pydantic import BaseModel
 from typing import List, Literal
-
-from langchain_google_genai import ChatGoogleGenerativeAI
 from python_a2a import A2AClient
-
-load_dotenv()
-import asyncio
-import subprocess
-import time
+from langchain_google_genai import ChatGoogleGenerativeAI
 from utils.cli import *
 
 
@@ -71,7 +66,6 @@ class Coordinator:
         for name, client in self.clients.items():
             try:
                 card = client.get_agent_card()   
-                # print(f"✅ Loaded card for {name}: {card.name}")
                 agent_loaded(card)
                 self.registry[name] = {"client": client, "card": card}
             except Exception as e:
@@ -121,7 +115,6 @@ Return ONLY valid JSON in this format:
         response = self.llm.invoke(prompt)
         content = response.content[0]["text"] if isinstance(response.content, list) else response.content
 
-        # print(f"output of the planner:{content}")
         planner_output(content)
         return Plan.model_validate_json(content)
 
@@ -183,12 +176,9 @@ Return a clean, human-readable final answer.
             await self.load_registry()
 
 
-
         plan = await self.plan(query)
 
         results = await self.execute(plan)
-
-        # print(f"result of the agents:\t\t\t{results}")
 
         final = await self.finalize(query, results)
 
