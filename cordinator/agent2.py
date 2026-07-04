@@ -49,9 +49,9 @@ class Coordinator:
     def __init__(self):
         self.clients = {
             "Search Agent": A2AClient("http://localhost:8001"),
-            "Knowledge Agent": A2AClient("http://localhost:8002"),
-            "Analysis Agent": A2AClient("http://localhost:8003"),
-            "Environment Agent": A2AClient("http://localhost:8004"),
+            "Analysis Agent": A2AClient("http://localhost:8002"),
+            "Environment Agent": A2AClient("http://localhost:8003"),
+            "Knowlege Agent": A2AClient("http://localhost:8004"),
         }
         self.search = A2AClient("http://localhost:8001")
         # print(self.search.get_agent_card())
@@ -180,9 +180,6 @@ Return a clean, human-readable final answer.
         if not self.registry:
             await self.load_registry()
 
-        client = A2AClient("http://localhost:8001")
-        result = client.ask("2 + 12 را حساب کن و در 15 ضرب کن")
-        print("Result from Analysis Agent:", result)
 
 
         plan = await self.plan(query)
