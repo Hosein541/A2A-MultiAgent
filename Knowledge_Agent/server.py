@@ -53,7 +53,7 @@ async def main():
 
     a2a_server = KnowledgeA2AServer(card)
 
-    await a2a_server.analysis.initialize()
+    await a2a_server.rag.initialize()
 
     run_server(
         a2a_server,

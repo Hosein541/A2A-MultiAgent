@@ -108,14 +108,14 @@ class KnowledgeA2AServer(A2AServer):
 
     def __init__(self, agent_card):
         super().__init__(agent_card=agent_card)
-        self.analysis = KnowledgeAgent()
+        self.rag = KnowledgeAgent()
 
     def handle_task(self, task):
 
         text = task.message["content"]["text"]
 
         result = asyncio.run(
-            self.analysis.ainvoke(text)
+            self.rag.ainvoke(text)
         )
 
         task.artifacts = [{
