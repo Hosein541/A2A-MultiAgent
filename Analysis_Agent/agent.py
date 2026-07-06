@@ -99,6 +99,12 @@ class AnalysisAgent:
             result = await self.agent.ainvoke({
                 "messages": [{"role": "user", "content": query}]
             }, config=self.config)
+
+            print("=" * 60)
+            print("Thread:", self.config["configurable"]["thread_id"])
+            print("Query :", query)
+            print(type(self.agent))
+            print("=" * 60)
             
             # extract the response
             if isinstance(result, dict) and "messages" in result:

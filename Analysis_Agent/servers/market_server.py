@@ -30,6 +30,10 @@ def get_market_data(symbol: str) -> MarketData:
     - What is the current price of Apple?
     - How much is Bitcoin worth?
     - Show today's Gold price.
+
+    IMPORTANT:
+    
+    If the ticker symbol is unknown, first call search_symbol().
     """
 
     ticker = yf.Ticker(symbol)

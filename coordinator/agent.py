@@ -21,7 +21,7 @@ async def run_agent(folder: str, port: int):
 
 async def main():
     await run_agent("Search_Agent", 8001)
-    await run_agent("Analysis_Agent", 8002)
+    await run_agent("Analysis_Agent", 8005)
     await run_agent("Environment_Agent", 8003)
     await run_agent("Knowledge_Agent", 8004)
     
@@ -37,6 +37,7 @@ asyncio.run(main())
 class Step(BaseModel):
     agent: Literal["Search Agent", "Knowledge Agent", "Analysis Agent", "Environment Agent"]
     task: str
+    depends_on: list[int] | None = None
 
 
 class Plan(BaseModel):
@@ -88,28 +89,117 @@ Skills: {skills}
 """
 
         prompt = f"""
-You are an intelligent multi-agent planner.
-Break down the user request into the minimum number of steps needed.
+You are the Coordinator Planner of a multi-agent AI system.
+
+Your responsibility is to decide WHICH agent(s) should handle the user's request.
+
+IMPORTANT:
+Each available agent is already an autonomous ReAct agent.
+Each agent can reason, decide which of its own tools to use, call multiple tools if necessary, and produce a final answer.
+
+Therefore:
+
+- NEVER plan at the tool level.
+- NEVER mention tool names, APIs, functions, MCP servers, or implementation details.
+- NEVER decompose a task into multiple steps if a single agent can complete it independently.
+- Create the minimum number of steps possible.
+- Each task should describe the desired outcome, NOT the procedure.
 
 Available Agents:
 {context}
 
-Rules:
-- Assign the most suitable agent for each step
-- Make tasks clear and executable
-- You can use one or multiple steps
+Planning Rules:
 
-User Query: {query}
+1. Select the most appropriate agent for each responsibility.
+2. Use a single step whenever one agent is sufficient.
+3. Use multiple steps ONLY when multiple agents have distinct responsibilities.
+4. Tasks should be high-level objectives.
+5. Do not describe how the agent should solve the task.
+6. Keep tasks concise and unambiguous.
 
-Return ONLY valid JSON in this format:
+User Query:
+{query}
+
+Return ONLY valid JSON.
+
+Output Schema:
+
 {{
-  "steps": [
-    {{
-      "agent": "search",
-      "task": "detailed task description"
-    }}
-  ]
+    "steps": [
+        {{
+            "agent": "<Exact Agent Name>",
+            "task": "<High-level objective>"
+        }}
+    ]
 }}
+
+The "agent" field MUST exactly match one of the available agent names.
+
+Good Examples:
+
+User:
+"What is today's Tesla stock price?"
+
+Output:
+{{
+    "steps": [
+        {{
+            "agent": "Analysis Agent",
+            "task": "Provide today's Tesla stock price."
+        }}
+    ]
+}}
+
+--------------------------------
+
+User:
+"What's the weather in Paris tomorrow?"
+
+Output:
+{{
+    "steps": [
+        {{
+            "agent": "Environment Agent",
+            "task": "Provide tomorrow's weather forecast for Paris."
+        }}
+    ]
+}}
+
+--------------------------------
+
+User:
+"Find the latest news about OpenAI and summarize it."
+
+Output:
+{{
+    "steps": [
+        {{
+            "agent": "Search Agent",
+            "task": "Find and summarize the latest news about OpenAI."
+        }}
+    ]
+}}
+
+--------------------------------
+
+User:
+"Find the latest AI regulations in Europe and compare them with the indexed documents."
+
+Output:
+{{
+    "steps": [
+        {{
+            "agent": "Search Agent",
+            "task": "Find the latest AI regulations in Europe."
+        }},
+        {{
+            "agent": "Knowledge Agent",
+            "task": "Compare the retrieved regulations with the indexed documents and summarize the differences."
+        }}
+    ]
+}}
+
+Return ONLY the JSON object.
 """
 
         response = self.llm.invoke(prompt)
