@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 import asyncio
+import threading
 from pathlib import Path
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -10,7 +11,9 @@ from langgraph.checkpoint.memory import MemorySaver
 from python_a2a import A2AServer
 from python_a2a import TaskStatus, TaskState
 import uuid 
-
+from langchain_core.runnables.config import (
+    RunnableConfig,
+)
 def extract_text(content):
 
     if isinstance(content, str):
@@ -52,13 +55,7 @@ class AnalysisAgent:
         }
     )
         self.memory = MemorySaver()
-
-        self.config = {
-            "configurable": {
-                # "thread_id": "search-agent"
-                "thread_id": str(uuid.uuid4())
-            }
-        }
+        self.config: RunnableConfig = {'configurable': {'thread_id': str(uuid.uuid4())}}
 
         self.agent = None
         self.llm = None
@@ -95,6 +92,7 @@ class AnalysisAgent:
         if not self.agent:
             await self.initialize()
 
+
         try:
             result = await self.agent.ainvoke({
                 "messages": [{"role": "user", "content": query}]
@@ -113,8 +111,6 @@ class AnalysisAgent:
             return str(result)
         except Exception as e:
             return f"Error: {str(e)}"
-        
-
 
 
 class AnalysisA2AServer(A2AServer):
@@ -147,5 +143,4 @@ class AnalysisA2AServer(A2AServer):
         )
 
         return task
-    
 
