@@ -36,7 +36,6 @@ def get_market_data(symbol: str) -> dict:
     If the ticker symbol is unknown, first call search_symbol().
     """
     try:
-        print("market tool start")
         ticker = yf.Ticker(symbol)
         info = ticker.fast_info
 
@@ -49,7 +48,6 @@ def get_market_data(symbol: str) -> dict:
         "Volume": info.get("volume")
         }
 
-        print("market tool end")
 
         return data 
     except Exception as e:
