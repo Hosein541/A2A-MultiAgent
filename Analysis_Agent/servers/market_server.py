@@ -19,7 +19,7 @@ class MarketData(BaseModel):
 
 
 @mcp.tool()
-def get_market_data(symbol: str) -> MarketData:
+def get_market_data(symbol: str) -> dict:
     """
     Retrieve the latest market information for a financial asset.
     
@@ -35,22 +35,27 @@ def get_market_data(symbol: str) -> MarketData:
     
     If the ticker symbol is unknown, first call search_symbol().
     """
+    try:
+        print("market tool start")
+        ticker = yf.Ticker(symbol)
+        info = ticker.fast_info
 
-    ticker = yf.Ticker(symbol)
-    info = ticker.info
+        data = {
+        "Symbol": symbol.upper(),
+        "Company": info.get("longName", "N/A"),
+        "Current Price": info.get("lastPrice"),
+        "Previous Close": info.get("previousClose"),
+        "Day High/Low": info.get("dayHigh")/info.get("dayLow"),
+        "Volume": info.get("volume")
+        }
 
-    return MarketData(
-        symbol=symbol.upper(),
-        company=info.get("longName", ""),
-        current_price=info.get("currentPrice"),
-        currency=info.get("currency"),
-        previous_close=info.get("previousClose"),
-        open=info.get("open"),
-        day_high=info.get("dayHigh"),
-        day_low=info.get("dayLow"),
-        volume=info.get("volume"),
-        market_cap=info.get("marketCap"),
-    )
+        print("market tool end")
+
+        return data 
+    except Exception as e:
+        print("tool error ",(repr(e)))
+        raise
+
 
 
 @mcp.tool()
