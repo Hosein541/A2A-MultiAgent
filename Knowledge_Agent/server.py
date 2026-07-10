@@ -1,5 +1,5 @@
 import asyncio
-from python_a2a import AgentCard, AgentSkill, run_server, A2AServer
+from python_a2a import AgentCard, AgentSkill, run_server
 from agent import KnowledgeA2AServer
 
 
